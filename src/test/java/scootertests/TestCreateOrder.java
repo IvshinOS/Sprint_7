@@ -1,23 +1,30 @@
 package scootertests;
 
-import apirequests.ApiBase;
 import apirequests.OrderRequest;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import ru.yandex.praktikum.Order;
+import static org.apache.http.HttpStatus.*;
 
 import static org.hamcrest.Matchers.*;
 
 @RunWith(Parameterized.class)
-public class TestCreateOrder extends ApiBase {
+public class TestCreateOrder{
       Order order;
 
     public TestCreateOrder(Order order) {
         this.order = order;
     }
+
+    @Before
+    public void setUp(){
+        orderRequest.setUp();
+    }
+
     @Parameterized.Parameters
     public static Object[][] getTestData(){
         return new Object[][]{
@@ -36,7 +43,7 @@ public class TestCreateOrder extends ApiBase {
     public void checkCreateOrder(){
         orderRequest.setOrder(order);
         orderRequest.createOrderRequest()
-                .then().statusCode(201)
+                .then().statusCode(SC_CREATED)
                 .and()
                 .assertThat().body("track", notNullValue());
     }

@@ -6,8 +6,9 @@ import ru.yandex.praktikum.Order;
 
 import static io.restassured.RestAssured.given;
 
-public class OrderRequest {
+public class OrderRequest extends ApiBase{
     private Order order;
+    private final static String ENDPOINT_ORDERS = "/api/v1/orders";
 
     public void setOrder(Order order) {
         this.order = order;
@@ -20,7 +21,7 @@ public class OrderRequest {
                 .header("Content-type", "application/json")
                 .body(order)
                 .when()
-                .post ("/api/v1/orders");
+                .post (ENDPOINT_ORDERS);
         return response;
     }
 
@@ -28,7 +29,7 @@ public class OrderRequest {
     public Response getOrdersRequest(){
         Response response =
         given()
-                .get ("/api/v1/orders");
+                .get (ENDPOINT_ORDERS);
         return  response;
     }
 }

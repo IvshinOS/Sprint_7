@@ -6,8 +6,10 @@ import ru.yandex.praktikum.Courier;
 
 import static io.restassured.RestAssured.given;
 
-public class CourierRequest {
+public class CourierRequest extends ApiBase {
     private Courier courier;
+    private final static String CREATE_ENDPOINT_COURIER = "/api/v1/courier";
+    private final static String LOGIN_ENDPOINT_COURIER ="/api/v1/courier/login";
 
     public void setCourier(Courier courier) {
         this.courier = courier;
@@ -20,7 +22,7 @@ public class CourierRequest {
                 .header("Content-type", "application/json")
                 .body(courier)
                 .when()
-                .post ("/api/v1/courier");
+                .post (CREATE_ENDPOINT_COURIER);
         return response;
     }
 
@@ -31,7 +33,7 @@ public class CourierRequest {
                 .header("Content-type", "application/json")
                 .body(courier)
                 .when()
-                .post ("/api/v1/courier/login");
+                .post (LOGIN_ENDPOINT_COURIER);
         return response;
     }
 
@@ -42,11 +44,11 @@ public class CourierRequest {
                         .header("Content-type", "application/json")
                         .body(courier)
                         .when()
-                        .post ("/api/v1/courier/login")
+                        .post (LOGIN_ENDPOINT_COURIER)
                         .then().extract().body().path("id");
         if (id != null) {
         given()
-                .delete ("/api/v1/courier/"+id);}
+                .delete (CREATE_ENDPOINT_COURIER+ "/{id}", id.toString());}
     }
 
 }

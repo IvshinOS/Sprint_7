@@ -1,19 +1,25 @@
 package scootertests;
 
-import apirequests.ApiBase;
 import apirequests.CourierRequest;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import ru.yandex.praktikum.Courier;
+import static org.apache.http.HttpStatus.*;
 
 import static org.hamcrest.Matchers.*;
 
-public class TestCreateCourier extends ApiBase {
+public class TestCreateCourier{
 
         Courier courier = new Courier("SuperCourier", "777", "Gena");
         CourierRequest courierRequest = new CourierRequest();
+    @Before
+    public void setUp(){
+        courierRequest.setUp();
+    }
+
     @Test
     @DisplayName("Создание курьера(позитив)")
     @Description("Проверка успешного создания курьера")
@@ -22,7 +28,7 @@ public class TestCreateCourier extends ApiBase {
         courierRequest.createCourier()
                 .then().assertThat().body("ok", is(true))
                 .and()
-                .statusCode(201);
+                .statusCode(SC_CREATED);
     }
 
     @Test
@@ -34,7 +40,7 @@ public class TestCreateCourier extends ApiBase {
         courierRequest.createCourier()
                 .then().assertThat().body("message", equalTo("Этот логин уже используется. Попробуйте другой."))
                 .and()
-                .statusCode(409);
+                .statusCode(SC_CONFLICT);
     }
 
     @Test
@@ -43,7 +49,7 @@ public class TestCreateCourier extends ApiBase {
     public void checkCreateCourierWithoutLogin(){
         courierRequest.setCourier(new Courier("","777","Gena"));
         courierRequest.createCourier()
-                .then().statusCode(400)
+                .then().statusCode(SC_BAD_REQUEST)
                 .and()
                 .assertThat().body("message",equalTo("Недостаточно данных для создания учетной записи"));
     }
@@ -53,7 +59,7 @@ public class TestCreateCourier extends ApiBase {
     public void checkCreateCourierWithoutPassword(){
         courierRequest.setCourier(new Courier("SuperCourier","","Gena"));
         courierRequest.createCourier()
-                .then().statusCode(400)
+                .then().statusCode(SC_BAD_REQUEST)
                 .and()
                 .assertThat().body("message",equalTo("Недостаточно данных для создания учетной записи"));
     }
@@ -66,7 +72,7 @@ public class TestCreateCourier extends ApiBase {
         courierRequest.createCourier()
                 .then().assertThat().body("ok", is(true))
                 .and()
-                .statusCode(201);
+                .statusCode(SC_CREATED);
     }
 
     @After

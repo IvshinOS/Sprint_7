@@ -1,20 +1,26 @@
 package scootertests;
 
-import apirequests.ApiBase;
 import apirequests.CourierRequest;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import ru.yandex.praktikum.Courier;
+import static org.apache.http.HttpStatus.*;
 
 import static org.hamcrest.Matchers.*;
 
-public class TestLoginCourier extends ApiBase {
+public class TestLoginCourier{
     CourierRequest courierRequest = new CourierRequest();
     Courier courier = new Courier ("SuperCourier","123");
+
+    @Before
+    public void setUp(){
+        courierRequest.setUp();
+    }
     @Test
-    @DisplayName("Авторизаци курьера в системе(успех)")
+    @DisplayName("Авторизация курьера в системе(успех)")
     @Description("Проверка авторизации с корректными логином и паролем")
     public void checkLoginCourier(){
         courierRequest.setCourier(courier);
@@ -22,7 +28,7 @@ public class TestLoginCourier extends ApiBase {
         courierRequest.loginCourier()
                 .then().assertThat().body("id", notNullValue())
                 .and()
-                .statusCode(200);
+                .statusCode(SC_OK);
     }
 
     @Test
@@ -33,7 +39,7 @@ public class TestLoginCourier extends ApiBase {
         courierRequest.loginCourier()
                 .then().assertThat().body("message", equalTo("Недостаточно данных для входа"))
                 .and()
-                .statusCode(400);
+                .statusCode(SC_BAD_REQUEST);
     }
 
     @Test
@@ -44,7 +50,7 @@ public class TestLoginCourier extends ApiBase {
         courierRequest.loginCourier()
                 .then().assertThat().body("message", equalTo("Недостаточно данных для входа"))
                 .and()
-                .statusCode(400);
+                .statusCode(SC_BAD_REQUEST);
     }
 
     @Test
@@ -55,7 +61,7 @@ public class TestLoginCourier extends ApiBase {
         courierRequest.loginCourier()
                 .then().assertThat().body("message", equalTo("Учетная запись не найдена"))
                 .and()
-                .statusCode(404);
+                .statusCode(SC_NOT_FOUND);
     }
 
     @Test
@@ -64,11 +70,11 @@ public class TestLoginCourier extends ApiBase {
     public void checkLoginIncorrectLogin() {
         courierRequest.setCourier(courier);
         courierRequest.createCourier();
-        courierRequest.setCourier(new Courier("SuperCourierr","123"));
+        courierRequest.setCourier(new Courier("SuperDuperCourier","123"));
         courierRequest.loginCourier()
                 .then().assertThat().body("message", equalTo("Учетная запись не найдена"))
                 .and()
-                .statusCode(404);
+                .statusCode(SC_NOT_FOUND);
         courierRequest.setCourier(courier);
     }
 
@@ -82,7 +88,7 @@ public class TestLoginCourier extends ApiBase {
         courierRequest.loginCourier()
                 .then().assertThat().body("message", equalTo("Учетная запись не найдена"))
                 .and()
-                .statusCode(404);
+                .statusCode(SC_NOT_FOUND);
         courierRequest.setCourier(courier);
     }
     @After
